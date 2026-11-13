@@ -10,16 +10,16 @@ not wrapped or bridged; each one is replaced at the React component boundary.
 
 Employee records are held by `EmployeeProvider`, which owns a reducer. Pages
 consume a small context API rather than reading or writing browser storage.
-Persistence is implemented separately by `employeeStorage.js`, keeping UI and
-storage responsibilities independent and testable.
+Persistence is implemented separately by `employeeStorage.js`. The provider
+saves when a record is added and reports whether storage accepted the write.
+If the write fails, the record remains available in the open app.
 
 ## Converted plugin
 
 `@drgyz/hrnet-accessible-modal` is the one jQuery plugin converted into a
 standalone React library. It is published on GitHub Packages. HRnet consumes
-the same version through its immutable public Git tag so evaluators can run a
-fresh install without configuring a GitHub Packages token; the component source
-is never copied into the application.
+the same version through its public Git tag. The lockfile uses the release
+commit over HTTPS, so a fresh install can run without a GitHub Packages token.
 
 ## Remaining plugin replacements
 

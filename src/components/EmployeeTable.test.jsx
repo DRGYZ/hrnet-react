@@ -11,7 +11,7 @@ const employees = [
     firstName: "Grace",
     lastName: "Hopper",
     department: "Engineering",
-    city: "Arlington",
+    city: "Montréal",
   }),
   createEmployeeFixture({
     id: "employee-3",
@@ -45,6 +45,25 @@ describe("EmployeeTable", () => {
     await user.type(screen.getByRole("searchbox"), "Manchester");
     expect(screen.getByRole("cell", { name: "Alan" })).toBeInTheDocument();
     expect(screen.queryByRole("cell", { name: "Ada" })).not.toBeInTheDocument();
+  });
+  it("finds accented names and dates as they appear in the directory", async () => {
+    const user = userEvent.setup();
+    render(
+      <RouterProvider initialPath="/employees">
+        <EmployeeTable employees={[
+          createEmployeeFixture({ city: "Montréal", startDate: "2024-02-01" }),
+          employees[2],
+        ]} />
+      </RouterProvider>,
+    );
+    const search = screen.getByRole("searchbox");
+    await user.type(search, "montreal");
+    expect(screen.getByRole("cell", { name: "Montréal" })).toBeInTheDocument();
+    expect(screen.queryByRole("cell", { name: "Alan" })).not.toBeInTheDocument();
+    await user.clear(search);
+    await user.type(search, "02/01/2024");
+    expect(screen.getByRole("cell", { name: "Montréal" })).toBeInTheDocument();
+    expect(screen.queryByRole("cell", { name: "Alan" })).not.toBeInTheDocument();
   });
   it("sorts a selected column in both directions", async () => {
     const user = userEvent.setup();

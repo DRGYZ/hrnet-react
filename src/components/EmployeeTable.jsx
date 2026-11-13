@@ -12,30 +12,38 @@ const columns = [
   { key: "state", label: "State" },
   { key: "zipCode", label: "ZIP code" },
 ];
+const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" });
+function searchText(value) {
+  return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
 export function EmployeeTable({ employees }) {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState("lastName");
   const [sortDirection, setSortDirection] = useState("ascending");
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
+  const searchIndex = useMemo(() => employees.map((employee) => ({
+    employee,
+    fields: columns.flatMap(({ key, format }) => {
+      const value = employee[key];
+      return format ? [searchText(value), searchText(format(value))] : [searchText(value)];
+    }),
+  })), [employees]);
   const sortedEmployees = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const normalizedQuery = searchText(query.trim());
     const filteredEmployees = normalizedQuery
-      ? employees.filter((employee) =>
-          columns.some((column) =>
-            employee[column.key].toLocaleLowerCase().includes(normalizedQuery),
-          ),
-        )
+      ? searchIndex.filter(({ fields }) => fields.some((field) => field.includes(normalizedQuery)))
+        .map(({ employee }) => employee)
       : employees;
     return [...filteredEmployees].sort((firstEmployee, secondEmployee) => {
-      const comparison = firstEmployee[sortKey].localeCompare(
+      const comparison = collator.compare(
+        firstEmployee[sortKey],
         secondEmployee[sortKey],
-        undefined,
-        { numeric: true, sensitivity: "base" },
       );
       return sortDirection === "ascending" ? comparison : -comparison;
     });
-  }, [employees, query, sortDirection, sortKey]);
+  }, [employees, query, searchIndex, sortDirection, sortKey]);
   if (employees.length === 0) {
     return (
       <section className="empty-state" aria-labelledby="empty-title">
@@ -109,7 +117,7 @@ export function EmployeeTable({ employees }) {
           <span>Try a different name, department, state, or city.</span>
         </div>
       ) : (
-        <div className="table-scroll">
+        <div className="table-scroll" tabIndex={0} role="region" aria-label="Scrollable employee table">
           <table>
             <thead>
               <tr>

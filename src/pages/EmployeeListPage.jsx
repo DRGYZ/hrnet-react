@@ -2,7 +2,7 @@ import { EmployeeTable } from "../components/EmployeeTable";
 import { AppLink } from "../router/Router";
 import { useEmployees } from "../state/employeeStateContext";
 export function EmployeeListPage() {
-  const { employees } = useEmployees();
+  const { employees, storageAvailable } = useEmployees();
   return (
     <>
       <section className="page-heading list-heading">
@@ -24,6 +24,9 @@ export function EmployeeListPage() {
         </div>
       </section>
 
+      {!storageAvailable ? (
+        <p role="status">Browser storage is unavailable. New records last until you leave or reload the app.</p>
+      ) : null}
       <EmployeeTable employees={employees} />
     </>
   );

@@ -27,6 +27,10 @@ const initialForm = {
 function createEmployee(form) {
   return {
     ...form,
+    firstName: form.firstName.trim(),
+    lastName: form.lastName.trim(),
+    street: form.street.trim(),
+    city: form.city.trim(),
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
   };
@@ -36,7 +40,7 @@ export function CreateEmployeePage() {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [createdEmployeeName, setCreatedEmployeeName] = useState("");
   const viewListButtonRef = useRef(null);
-  const { addEmployee } = useEmployees();
+  const { addEmployee, storageAvailable } = useEmployees();
   const { navigate } = useAppRouter();
   const today = getLocalDateInputValue();
   const updateField = (field, value) => {
@@ -116,6 +120,7 @@ export function CreateEmployeePage() {
               label="Start date"
               value={form.startDate}
               onChange={(value) => updateField("startDate", value)}
+              min={form.dateOfBirth || undefined}
               required
             />
             <SelectInput
@@ -178,7 +183,9 @@ export function CreateEmployeePage() {
         </fieldset>
 
         <div className="form-actions">
-          <p>Your employee record is stored only in this browser.</p>
+          {storageAvailable ? <p>Employee records are saved in this browser.</p> : (
+            <p role="status">Browser storage is unavailable. New records last until you leave or reload the app.</p>
+          )}
           <button className="button button-primary" type="submit">
             Create employee
           </button>
@@ -195,6 +202,7 @@ export function CreateEmployeePage() {
           <strong>{createdEmployeeName}</strong> was added to the HRnet employee
           directory.
         </p>
+        {!storageAvailable ? <p role="status">This record is available until you leave or reload the app.</p> : null}
         <div className="modal-actions">
           <button
             className="button button-secondary"

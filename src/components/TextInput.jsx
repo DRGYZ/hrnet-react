@@ -24,7 +24,7 @@ export function TextInput({
         onChange={(event) => onChange(event.target.value)}
         autoComplete={autoComplete}
         inputMode={inputMode}
-        pattern={pattern}
+        pattern={pattern ?? (required && type === "text" ? ".*\\S.*" : undefined)}
         maxLength={maxLength}
         required={required}
       />

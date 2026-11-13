@@ -3,6 +3,7 @@ export function DateInput({
   label,
   value,
   onChange,
+  min,
   max,
   required = false,
 }) {
@@ -18,6 +19,7 @@ export function DateInput({
         type="date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        min={min}
         max={max}
         required={required}
       />

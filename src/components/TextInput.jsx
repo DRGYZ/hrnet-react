@@ -1,3 +1,6 @@
+import { FormField } from "./FormField";
+import { getFieldAria } from "./fieldAccessibility";
+
 export function TextInput({
   id,
   label,
@@ -9,13 +12,12 @@ export function TextInput({
   pattern,
   maxLength,
   required = false,
+  hint,
+  error,
 }) {
+  const { describedBy, invalid } = getFieldAria(id, hint, error);
   return (
-    <div className="form-field">
-      <label htmlFor={id}>
-        {label}
-        {required ? <span aria-hidden="true"> *</span> : null}
-      </label>
+    <FormField id={id} label={label} required={required} hint={hint} error={error}>
       <input
         id={id}
         name={id}
@@ -27,7 +29,9 @@ export function TextInput({
         pattern={pattern ?? (required && type === "text" ? ".*\\S.*" : undefined)}
         maxLength={maxLength}
         required={required}
+        aria-invalid={invalid}
+        aria-describedby={describedBy}
       />
-    </div>
+    </FormField>
   );
 }

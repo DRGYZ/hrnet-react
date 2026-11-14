@@ -1,8 +1,15 @@
 import { EmployeeTable } from "../components/EmployeeTable";
 import { AppLink } from "../router/Router";
 import { useEmployees } from "../state/employeeStateContext";
+
 export function EmployeeListPage() {
-  const { employees, storageAvailable } = useEmployees();
+  const {
+    employees,
+    storageAvailable,
+    lastCreatedEmployee,
+    loadFictionalEmployees,
+  } = useEmployees();
+
   return (
     <>
       <section className="page-heading list-heading">
@@ -18,6 +25,15 @@ export function EmployeeListPage() {
             <strong>{employees.length}</strong>
             {employees.length === 1 ? " employee" : " employees"}
           </span>
+          {employees.length < 12 ? (
+            <button
+              type="button"
+              className="button button-secondary"
+              onClick={loadFictionalEmployees}
+            >
+              Load fictional records
+            </button>
+          ) : null}
           <AppLink className="button button-primary" to="/">
             Add employee
           </AppLink>
@@ -25,9 +41,15 @@ export function EmployeeListPage() {
       </section>
 
       {!storageAvailable ? (
-        <p role="status">Browser storage is unavailable. New records last until you leave or reload the app.</p>
+        <p className="storage-alert" role="status">
+          Browser storage is unavailable. New records last until you leave or reload the app.
+        </p>
       ) : null}
-      <EmployeeTable employees={employees} />
+      <EmployeeTable
+        employees={employees}
+        lastCreatedEmployee={lastCreatedEmployee}
+        onLoadFictional={loadFictionalEmployees}
+      />
     </>
   );
 }

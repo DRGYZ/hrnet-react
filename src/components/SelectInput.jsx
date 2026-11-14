@@ -1,3 +1,6 @@
+import { FormField } from "./FormField";
+import { getFieldAria } from "./fieldAccessibility";
+
 export function SelectInput({
   id,
   label,
@@ -5,13 +8,12 @@ export function SelectInput({
   options,
   onChange,
   required = false,
+  hint,
+  error,
 }) {
+  const { describedBy, invalid } = getFieldAria(id, hint, error);
   return (
-    <div className="form-field">
-      <label htmlFor={id}>
-        {label}
-        {required ? <span aria-hidden="true"> *</span> : null}
-      </label>
+    <FormField id={id} label={label} required={required} hint={hint} error={error}>
       <div className="select-control">
         <select
           id={id}
@@ -19,6 +21,8 @@ export function SelectInput({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           required={required}
+          aria-invalid={invalid}
+          aria-describedby={describedBy}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -27,6 +31,6 @@ export function SelectInput({
           ))}
         </select>
       </div>
-    </div>
+    </FormField>
   );
 }

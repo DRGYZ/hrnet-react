@@ -76,4 +76,57 @@ describe("HRnet employee workflow", () => {
       write.mockRestore();
     }
   });
+
+  it("shows scannable validation alerts and clears them as fields are fixed", async () => {
+    const user = userEvent.setup();
+    render(<AppContent initialPath="/" />);
+    await fillEmployee(user, "   ");
+    const firstName = screen.getByLabelText(/First name/);
+    await user.click(screen.getByRole("button", { name: "Create employee" }));
+
+    expect(
+      screen.getByText(/1 field needs attention before saving/),
+    ).toBeInTheDocument();
+    expect(firstName).toHaveAttribute("aria-invalid", "true");
+    expect(
+      screen.getByText(/Enter a first name \(blank spaces are not allowed\)\./, {
+        selector: ".field-error",
+      }),
+    ).toBeInTheDocument();
+
+    await user.clear(firstName);
+    await user.type(firstName, "Clara");
+    expect(
+      screen.queryByText(/fields? needs? attention before saving/),
+    ).not.toBeInTheDocument();
+    expect(firstName).not.toHaveAttribute("aria-invalid");
+  });
+
+  it("fills a fictional preset, confirms in modal, loads fictional roster, and locates the new record", async () => {
+    const user = userEvent.setup();
+    render(<AppContent initialPath="/" />);
+    await user.click(
+      screen.getByRole("button", { name: "Clara Moreau · Engineering" }),
+    );
+    await user.click(screen.getByRole("button", { name: "Create employee" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Employee created" });
+    expect(dialog).toHaveTextContent("Clara Moreau");
+    expect(dialog).toHaveTextContent("Engineering");
+    expect(dialog).toHaveTextContent("10/15/2026");
+
+    await user.click(
+      screen.getByRole("button", { name: "View employee list" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Load fictional records" }),
+    );
+    expect(screen.getByText("13", { selector: ".record-count strong" })).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Find in directory" }),
+    );
+    expect(screen.getByRole("cell", { name: "Clara" })).toBeInTheDocument();
+    expect(screen.queryByRole("cell", { name: "Mateo" })).not.toBeInTheDocument();
+  });
 });

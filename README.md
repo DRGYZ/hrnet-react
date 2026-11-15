@@ -1,7 +1,13 @@
 # HRnet React
 
-HRnet is WealthHealth's employee records application, migrated from a legacy
-jQuery implementation to a fully functional React JavaScript application.
+HRnet React is the OpenClassrooms migration of WealthHealth's employee form
+and directory from jQuery to React. Create a record, confirm it in the modal,
+then search, sort, or page through the directory. Records are stored locally in
+the browser.
+
+![HRnet React directory with sample employee records](docs/employee-directory.png)
+
+[Nyx People](https://github.com/DRGYZ/nyx-people) is a separate follow-on project.
 
 ## Project goals
 
@@ -17,41 +23,46 @@ jQuery implementation to a fully functional React JavaScript application.
 ## Features
 
 - Create employees with validated personal, employment, and address fields.
-- Persist records between browser sessions.
+- Persist records between browser sessions and report when a record could only
+  be saved for the current visit.
 - Confirm creation through the accessible `@drgyz/hrnet-accessible-modal`
   package.
-- Search all employee fields.
+- Search all employee fields, including displayed dates and names with accents.
 - Sort every table column.
 - Select a page size and move through paginated results.
 - Responsive layouts and keyboard-visible focus states.
 
-## Installation
+## Run locally
+
+Use Node.js 24, npm, and Git.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-The application pins the converted library's immutable public
+Open the URL shown by Vite. The employee form is at `/` and the directory at
+`/employees`. When serving the build, configure the host to serve `index.html`
+for direct requests to `/employees`.
+
+The application pins the converted library's public
 [`v0.2.0`](https://github.com/DRGYZ/react-hrnet-modal/tree/v0.2.0) source tag.
 The same release is published as
 [`@drgyz/hrnet-accessible-modal`](https://github.com/DRGYZ/react-hrnet-modal/pkgs/npm/hrnet-accessible-modal)
 on GitHub Packages. The source tag keeps a fresh clone installable without a
 registry token, because GitHub requires authentication to install npm-format
-packages even when their package page is public.
+packages even when their package page is public. The npm lockfile resolves
+the release commit over HTTPS.
 
 ## Quality commands
 
 ```bash
-npm run lint
-npm run test
-npm run build
 npm run check
 ```
 
-The Lighthouse comparison must run against `npm run build` followed by
-`npm run preview`, using the same Lighthouse version and audit profile as the
-legacy baseline.
+The check runs ESLint, Vitest, and the production build locally and in GitHub
+Actions. For a Lighthouse comparison, run `npm run preview` after building and
+use the same Lighthouse version and settings for both implementations.
 
 ## Architecture
 

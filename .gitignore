@@ -3,6 +3,7 @@ dist
 coverage
 output
 .playwright-cli
+/graphify-out/
 .DS_Store
 *.log
 .idea

@@ -46,7 +46,7 @@ Open the URL shown by Vite. The employee form is at `/` and the directory at
 for direct requests to `/employees`.
 
 The application pins the converted library's public
-[`v0.2.0`](https://github.com/DRGYZ/react-hrnet-modal/tree/v0.2.0) source tag.
+[`v0.2.1`](https://github.com/DRGYZ/react-hrnet-modal/tree/v0.2.1) source tag.
 The same release is published as
 [`@drgyz/hrnet-accessible-modal`](https://github.com/DRGYZ/react-hrnet-modal/pkgs/npm/hrnet-accessible-modal)
 on GitHub Packages. The source tag keeps a fresh clone installable without a
